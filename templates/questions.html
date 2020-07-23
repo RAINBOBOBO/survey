@@ -4,11 +4,13 @@
 
 {% block content %}
 <div>
+    <p>{{ get_flashed_messages()[0] }}</p>
+    <!-- why are there so many flash messages?? -->
     <h3>Question #{{ num_question_in_template + 1}}: {{ question_in_template.question }}</h3>
    <form action="/answer" method="POST">
-        {% for idx in range(num_choices_in_template) %}
-            <input type="radio" name="question-radio" value="question-radio-{{ idx }}">
-            <label for="question-radio"> {{ choices_in_template[idx] }} </label>
+        {% for choice in choices_in_template %}
+            <input type="radio" name="question-radio" value="question-radio-{{ num_question_in_template }}">
+            <label for="question-radio"> {{ choice }} </label>
             <br>
         {% endfor %}
         <br>
