@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} Survey {% endblock %}
+
+{% block content %}
+
+<div>
+  <h3>{{ title_in_template }}</h3>
+  <div>{{ instructions_in_template }}</div>
+  <form action="">
+    <input type="button" onclick="location.href='/questions/0';" value="Next" />
+  </form>
+</div>
+
+{% endblock %}
