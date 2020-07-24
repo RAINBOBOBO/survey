@@ -53,31 +53,29 @@ def start_session():
 
 @app.route("/questions/<str_question>")
 def show_questions(str_question):
-  """shows questions"""
-  num_question = int(str_question)
-  print(num_question)
+    """shows questions"""
+    num_question = int(str_question)
 
-  if num_question != len(session['responses']):
-      flash("Follow the rules pls")
-      return redirect(f"/questions/{len(session['responses'])}")
+    if num_question != len(session['responses']):
+        flash("Follow the rules pls")
+        return redirect(f"/questions/{len(session['responses'])}")
 
-  return render_template("questions.html",
-    question_in_template = satisfaction_survey.questions[num_question],
-    num_question_in_template = num_question,
-    choices_in_template = satisfaction_survey.questions[num_question].choices)
+    return render_template("questions.html",
+        question_in_template = satisfaction_survey.questions[num_question],
+        num_question_in_template = num_question,
+        choices_in_template = satisfaction_survey.questions[num_question].choices)
 
 
 
 @app.route("/answer", methods=["POST"])
 def answer():
-  session['responses'].append(request.form["question-radio"])
-  print(session['responses'])
-  next_question = request.form["question-radio"][-1]
+    session['responses'] = session['responses'] + [request.form["question-radio"]]
+    next_question = request.form["question-radio"][-1]
 
-  if int(next_question)+1 >= len(satisfaction_survey.questions):
-      return redirect("/thanks")
-  else:
-      return redirect(f"/questions/{str(int(next_question)+1)}")
+    if int(next_question)+1 >= len(satisfaction_survey.questions):
+        return redirect("/thanks")
+    else:
+        return redirect(f"/questions/{str(int(next_question)+1)}")
 
 
 @app.route("/thanks")
