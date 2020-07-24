@@ -1,13 +1,13 @@
-from flask import Flask, request, render_template, redirect, jsonify, flash
+from flask import Flask, request, render_template, redirect, jsonify, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 # from surveys import satisfaction_survey #TODO: uncomment later
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "very-secret"
+app.config['SECRET_KEY'] = "SHHHHHHHHHHH SEEKRIT"
 
-debug = DebugToolbarExtension(app)
+# debug = DebugToolbarExtension(app)
 
-responses = []
+# responses = []
 
 # for reference only TODO: delete later
 class Question:
@@ -42,29 +42,43 @@ def show_survey():
   """renders a page to show a survey and a button"""
   return render_template("survey.html", title_in_template=satisfaction_survey.title, instructions_in_template=satisfaction_survey.instructions)
 
+
+@app.route("/start-session", methods=["POST"])
+def start_session():
+  """setup a new session then redirect to survey"""
+  session['responses'] = []
+  return redirect('/questions/0')
+
+
+
 @app.route("/questions/<str_question>")
 def show_questions(str_question):
   """shows questions"""
   num_question = int(str_question)
+  print(num_question)
 
-  if num_question != len(responses):
+  if num_question != len(session['responses']):
       flash("Follow the rules pls")
-      return redirect(f"/questions/{len(responses)}")
+      return redirect(f"/questions/{len(session['responses'])}")
 
   return render_template("questions.html",
     question_in_template = satisfaction_survey.questions[num_question],
     num_question_in_template = num_question,
     choices_in_template = satisfaction_survey.questions[num_question].choices)
 
+
+
 @app.route("/answer", methods=["POST"])
 def answer():
-    responses.append(request.form["question-radio"])
-    next_question = request.form["question-radio"][-1]
+  session['responses'].append(request.form["question-radio"])
+  print(session['responses'])
+  next_question = request.form["question-radio"][-1]
 
-    if int(next_question)+1 >= len(satisfaction_survey.questions):
-        return redirect("/thanks")
-    else:
-        return redirect(f"/questions/{str(int(next_question)+1)}")
+  if int(next_question)+1 >= len(satisfaction_survey.questions):
+      return redirect("/thanks")
+  else:
+      return redirect(f"/questions/{str(int(next_question)+1)}")
+
 
 @app.route("/thanks")
 def thanks():
